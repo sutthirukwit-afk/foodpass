@@ -1,0 +1,28 @@
+
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>True/False Demo</title>
+<style>
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#dfefff,#fdf6e3);display:flex;justify-content:center;align-items:center;min-height:100vh}
+.card{background:#fff;max-width:720px;width:92%;padding:24px;border-radius:18px;box-shadow:0 8px 25px rgba(0,0,0,.15)}
+.hidden{display:none}input{width:100%;padding:12px;font-size:18px}button{padding:14px 18px;font-size:20px;border:none;border-radius:12px;cursor:pointer}
+#start{width:100%;background:#6ea8fe;color:#fff}#start:disabled{background:#bbb}
+.true{background:#b9f6ca;width:48%}.false{background:#ffcdd2;width:48%}
+.top{display:flex;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}.bar{height:10px;background:#ddd;border-radius:8px}.fill{height:10px;background:#6ea8fe;width:0;border-radius:8px;transition:.3s}
+table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #ddd}
+</style></head><body><div class=card>
+<div id=welcome><h2>True / False Game</h2><input id=player placeholder="กรอกชื่อผู้เล่น"><br><br><button id=start disabled>เริ่มเกม</button></div>
+<div id=game class=hidden><div class=top><span id=nm></span><span id=sc></span><span id=no></span></div><div class=bar><div id=fill class=fill></div></div><h2 id=q></h2><button class=true id=t>✔ ถูก</button><button class=false id=f>✘ ผิด</button></div>
+<div id=result class=hidden><h2 id=final></h2><table><thead><tr><th>#</th><th>ชื่อ</th><th>คะแนน</th></tr></thead><tbody id=board></tbody></table><br><button onclick="location.reload()">เล่นอีกครั้ง</button></div>
+</div>
+<script>
+const questions=[
+["ล้างมือก่อนสัมผัสอาหารช่วยลดการปนเปื้อน",true],["อาหารดิบวางรวมอาหารสุกได้",false],["ควรคลุมผม",true],["น้ำเดือด100°C",true],["เขียงดิบและสุกควรแยก",true],["อาหารหมดอายุกินได้",false],["แมลงวันนำเชื้อโรค",true],["ควรล้างมือหลังเข้าห้องน้ำ",true],["ใช้ช้อนชิมซ้ำได้",false],["เก็บอาหารร้อนเหนือ60°C",true],["ล้างผักก่อนกิน",true],["อาหารมีกลิ่นเสียควรทิ้ง",true],["ผ้าเช็ดผืนเดียวใช้ได้ทุกอย่าง",false],["ตู้เย็นช่วยชะลอเชื้อ",true],["น้ำแข็งบริโภคต้องสะอาด",true],["สวมแหวนปรุงอาหารเหมาะสม",false],["ปิดแผลก่อนทำอาหาร",true],["ไอจามไม่ปนเปื้อนอาหาร",false],["แยกขยะช่วยสุขลักษณะ",true],["ล้างมือด้วยน้ำเปล่าเพียงพอเสมอ",false]];
+let i=0,s=0,name="";
+const player=document.getElementById("player"),start=document.getElementById("start");
+player.addEventListener("input",()=>start.disabled=player.value.trim()=="");
+start.addEventListener("click",()=>{name=player.value.trim();welcome.classList.add("hidden");game.classList.remove("hidden");show();});
+function show(){nm.textContent="👤 "+name;sc.textContent="⭐ "+s;no.textContent=(i+1)+"/"+questions.length;fill.style.width=(i/questions.length*100)+"%";q.textContent=questions[i][0]}
+function choose(v){if(v===questions[i][1])s++;i++;if(i<questions.length)show();else finish();}
+t.onclick=()=>choose(true);f.onclick=()=>choose(false);
+function finish(){game.classList.add("hidden");result.classList.remove("hidden");final.textContent=`${name} ได้ ${s}/${questions.length} คะแนน`;let b=JSON.parse(localStorage.getItem("tfdemo")||"[]");b.push({name,score:s});b.sort((a,b)=>b.score-a.score);b=b.slice(0,5);localStorage.setItem("tfdemo",JSON.stringify(b));board.innerHTML=b.map((x,k)=>`<tr><td>${k+1}</td><td>${x.name}</td><td>${x.score}</td></tr>`).join("")}
+</script></body></html>
